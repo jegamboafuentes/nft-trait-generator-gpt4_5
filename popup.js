@@ -120,6 +120,6 @@ function setStatus(status, img) {
             break;
         default:
             statusElement.textContent = "Status: Unknown";
-            statusImage.src = img//"images/unknown.png";
+            statusImage.src = "images/LOGO1.png";
     }
 }
