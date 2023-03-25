@@ -1,4 +1,4 @@
-const apiKey = "YOUR_GCP_VISION_API_KEY";
+const apiKey = "AIzaSyDUYrOx0r7spBBltBDthXu_zwWzk2LKUA4";
 const annotationsContainer = document.getElementById("annotations");
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
