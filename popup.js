@@ -15,6 +15,7 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
 });
 
 async function annotateImage(imageUrl) {
+  console.log('ABOUT TO ANALYZE THIS IMAGE WITH GCP: '+imageUrl)
   const apiEndpoint = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
   const requestBody = {
     requests: [
@@ -43,6 +44,8 @@ async function annotateImage(imageUrl) {
   });
 
   const data = await response.json();
+  console.log('GCP')
+  console.log(data)
   const annotations = data.responses[0].labelAnnotations;
   return annotations;
 }
