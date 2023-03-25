@@ -1,30 +1,25 @@
 const apiKey = "AIzaSyDUYrOx0r7spBBltBDthXu_zwWzk2LKUA4";
 const annotationsContainer = document.getElementById("annotations");
-const statusElement = document.getElementById("status");
+const statusElement = document.getElementById("status-text");
 
 chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
     if (response.imageUrl) {
-        setStatus(2); // Image loaded
+        setStatus(2, response.imageUrl); // Image loaded
 
         annotateImage(response.imageUrl)
             .then((annotations) => {
                 if (annotations && annotations.length > 0) {
-                    setStatus(4); // Displaying results
+                    setStatus(4, response.imageUrl); // Displaying results
                 } else {
-                    setStatus(3); // Waiting
+                    setStatus(3, response.imageUrl); // Waiting
                 }
 
                 // Save annotations to chrome.storage.local
-                // chrome.storage.local.set({ annotations: annotations }).then(() => {
-                //     console.log("Value is set (saved) to " + annotations);
-                //   });
-                console.log('jegf');
-                console.log(chrome.storage);
-                //chrome.storage.session.set({ annotations: annotations });
+                //chrome.storage.local.set({ annotations: annotations });
+
                 displayAnnotations(annotations);
             })
             .catch((error) => {
-                console.log(error);
                 console.error(error);
                 annotationsContainer.innerHTML = "Error: Failed to fetch annotations.";
             });
@@ -32,7 +27,6 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
         setStatus(1); // Image not loaded
     }
 });
-
 
 async function annotateImage(imageUrl) {
     console.log('IN GCP VISON REST CALL FUNCTION')
@@ -81,10 +75,13 @@ async function annotateImage(imageUrl) {
             }
         }
     }
+
     return annotations;
 }
 
 function displayAnnotations(annotations) {
+    // ... (Existing code)
+
     if (annotations && annotations.length > 0) {
         const list = document.createElement("ul");
         annotations.forEach((annotation) => {
@@ -96,23 +93,33 @@ function displayAnnotations(annotations) {
     } else {
         annotationsContainer.innerHTML = "No annotations found.";
     }
+
+    const actionsContainer = document.getElementById("actions");
+    actionsContainer.style.display = "block";
 }
 
-function setStatus(status) {
+function setStatus(status, img) {
+    const statusImage = document.getElementById("status-image");
+
     switch (status) {
         case 1:
             statusElement.textContent = "Status: Image not loaded";
+            statusImage.src = "images/LOGO1.png";
             break;
         case 2:
             statusElement.textContent = "Status: Image loaded";
+            statusImage.src = img//"images/image_loaded.png";
             break;
         case 3:
-            statusElement.textContent = "Status: Waiting";
+            statusElement.textContent = "Status: Waiting (this can take a minute)";
+            statusImage.src = "images/pixel5.png";
             break;
         case 4:
             statusElement.textContent = "Status: Displaying results";
+            statusImage.src = img//"images/displaying_results.png";
             break;
         default:
             statusElement.textContent = "Status: Unknown";
+            statusImage.src = img//"images/unknown.png";
     }
 }
