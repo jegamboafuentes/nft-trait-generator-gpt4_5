@@ -1,3 +1,5 @@
+let imageUrl = null;
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "annotateImage",
@@ -7,7 +9,15 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
+  console.log("annotateImage listener")
   if (info.menuItemId === "annotateImage") {
-    chrome.tabs.sendMessage(tab.id, { imageUrl: info.srcUrl });
+    imageUrl = info.srcUrl;
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("getImageUrl listener")
+  if (request.type === "getImageUrl") {
+    sendResponse({ imageUrl: imageUrl });
   }
 });

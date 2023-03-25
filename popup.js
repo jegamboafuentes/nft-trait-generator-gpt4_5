@@ -1,9 +1,9 @@
 const apiKey = "AIzaSyDUYrOx0r7spBBltBDthXu_zwWzk2LKUA4";
 const annotationsContainer = document.getElementById("annotations");
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.imageUrl) {
-    annotateImage(request.imageUrl)
+chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
+  if (response.imageUrl) {
+    annotateImage(response.imageUrl)
       .then((annotations) => {
         displayAnnotations(annotations);
       })
