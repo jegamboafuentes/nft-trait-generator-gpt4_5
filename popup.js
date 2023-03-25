@@ -15,8 +15,12 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
                 }
 
                 // Save annotations to chrome.storage.local
-                //chrome.storage.local.set({ annotations: annotations });
-
+                // chrome.storage.local.set({ annotations: annotations }).then(() => {
+                //     console.log("Value is set (saved) to " + annotations);
+                //   });
+                console.log('jegf');
+                console.log(chrome.storage);
+                //chrome.storage.session.set({ annotations: annotations });
                 displayAnnotations(annotations);
             })
             .catch((error) => {
@@ -28,6 +32,7 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
         setStatus(1); // Image not loaded
     }
 });
+
 
 async function annotateImage(imageUrl) {
     console.log('IN GCP VISON REST CALL FUNCTION')
@@ -76,7 +81,6 @@ async function annotateImage(imageUrl) {
             }
         }
     }
-
     return annotations;
 }
 
