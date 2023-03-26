@@ -1,11 +1,27 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'insertDataIntoOpenSea') {
+  if (request.type === 'insertDataIntoOpenSeaLevels') {
     chrome.storage.local.get('annotations', (data) => {
       if (data.annotations) {
         const gcpResponse = data.annotations;
         openSeaLevels(gcpResponse);
         //sendResponse({ status: "Success!" });
         openSeaLevels(gcpResponse);
+      } else {
+        console.error('No annotations found in storage');
+        //sendResponse({ status: "Exception occurred!" });
+      }
+    });
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'insertDataIntoOpenSeaStats') {
+    chrome.storage.local.get('annotations', (data) => {
+      if (data.annotations) {
+        const gcpResponse = data.annotations.imagePropertiesAnnotation.dominantColors;
+        //openSeaLevels(gcpResponse);
+        //sendResponse({ status: "Success!" });
+        //openSeaLevels(gcpResponse);
       } else {
         console.error('No annotations found in storage');
         //sendResponse({ status: "Exception occurred!" });

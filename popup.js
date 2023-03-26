@@ -45,6 +45,10 @@ async function annotateImage(imageUrl) {
                         type: "LABEL_DETECTION",
                         maxResults: 20,
                     },
+                    {
+                        type: "IMAGE_PROPERTIES",
+                        maxResults: 20,
+                    },
                 ],
             },
         ],
@@ -64,7 +68,12 @@ async function annotateImage(imageUrl) {
         });
 
         const data = await response.json();
+        console.log('debuging');
         annotations = data.responses[0].labelAnnotations;
+        img_properties = data.responses[0].imagePropertiesAnnotation;
+        console.log(im_properties);
+
+
 
         if (annotations && annotations.length > 0) {
             break;
@@ -84,7 +93,7 @@ function displayAnnotations(annotations) {
 
     if (annotations && annotations.length > 0) {
         const list = document.createElement("ul");
-        annotations.forEach((annotation) => {
+        annotations.slice(0,5).forEach((annotation) => {
             const listItem = document.createElement("li");
             listItem.textContent = `${annotation.description} (${(annotation.score * 100).toFixed(2)}%)`;
             list.appendChild(listItem);
@@ -107,7 +116,7 @@ function setStatus(status, img) {
             statusImage.src = "images/project.png";
             break;
         case 2:
-            statusElement.textContent = "Status: Wait, Image loaded";
+            statusElement.textContent = "Processing this image:";
             statusImage.src = img;
             break;
         case 3:
@@ -115,7 +124,7 @@ function setStatus(status, img) {
             statusImage.src = "images/pixel5.png";
             break;
         case 4:
-            statusElement.textContent = "Status: Displaying results";
+            statusElement.textContent = "Results (sample):";
             statusImage.src = img;
             break;
         default:
@@ -126,6 +135,12 @@ function setStatus(status, img) {
 
 document.getElementById('openSeaLevels_button').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSea' });
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSeaLevels' });
+    });
+});
+
+document.getElementById('openSeaStats_button').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSeaStats' });
     });
 });
