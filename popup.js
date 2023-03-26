@@ -8,16 +8,16 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
 
         annotateImage(response.imageUrl)
             .then((annotations) => {
-                if (annotations && annotations.length > 0) {
+                if (annotations.labelAnnotations && annotations.labelAnnotations.length > 0) {
                     setStatus(4, response.imageUrl); // Displaying results
                 } else {
                     setStatus(3); // Waiting
                 }
 
                 // Save annotations to chrome.storage.local
-                chrome.storage.local.set({ annotations: annotations });
+                chrome.storage.local.set({ annotations: annotations.labelAnnotations });
 
-                displayAnnotations(annotations);
+                displayAnnotations(annotations.labelAnnotations);
             })
             .catch((error) => {
                 console.error(error);
@@ -56,6 +56,7 @@ async function annotateImage(imageUrl) {
 
     let retries = 50;
     let annotations;
+    let gcpApiVisionResponse;
 
     while (retries > 0) {
         console.log('in while')
@@ -69,9 +70,8 @@ async function annotateImage(imageUrl) {
 
         const data = await response.json();
         console.log('debuging');
+        gcpApiVisionResponse = data.responses[0];
         annotations = data.responses[0].labelAnnotations;
-        img_properties = data.responses[0].imagePropertiesAnnotation;
-        console.log(im_properties);
 
 
 
@@ -85,7 +85,7 @@ async function annotateImage(imageUrl) {
         }
     }
 
-    return annotations;
+    return gcpApiVisionResponse;
 }
 
 function displayAnnotations(annotations) {
