@@ -3,7 +3,7 @@
     "name": "Image Annotation",
     "version": "1.0",
     "description": "A Chrome extension that uses the GCP Vision API to annotate images",
-    "permissions": ["contextMenus"],
+    "permissions": ["contextMenus", "storage"],
     "action": {
       "default_popup": "popup.html",
       "default_icon": {
@@ -23,7 +23,8 @@
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["content.js"]
+        "js": ["marketplaces.js"],
+        "run_at": "document_end"
       }
     ]
   }

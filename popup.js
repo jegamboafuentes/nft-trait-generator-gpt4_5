@@ -11,11 +11,11 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
                 if (annotations && annotations.length > 0) {
                     setStatus(4, response.imageUrl); // Displaying results
                 } else {
-                    setStatus(3, response.imageUrl); // Waiting
+                    setStatus(3); // Waiting
                 }
 
                 // Save annotations to chrome.storage.local
-                //chrome.storage.local.set({ annotations: annotations });
+                chrome.storage.local.set({ annotations: annotations });
 
                 displayAnnotations(annotations);
             })
@@ -43,7 +43,7 @@ async function annotateImage(imageUrl) {
                 features: [
                     {
                         type: "LABEL_DETECTION",
-                        maxResults: 10,
+                        maxResults: 20,
                     },
                 ],
             },
@@ -104,11 +104,11 @@ function setStatus(status, img) {
     switch (status) {
         case 1:
             statusElement.textContent = "Status: Image not loaded";
-            statusImage.src = "images/LOGO1.png";
+            statusImage.src = "images/project.png";
             break;
         case 2:
-            statusElement.textContent = "Status: Image loaded";
-            statusImage.src = img//"images/image_loaded.png";
+            statusElement.textContent = "Status: Wait, Image loaded";
+            statusImage.src = img;
             break;
         case 3:
             statusElement.textContent = "Status: Waiting (this can take a minute)";
@@ -116,10 +116,16 @@ function setStatus(status, img) {
             break;
         case 4:
             statusElement.textContent = "Status: Displaying results";
-            statusImage.src = img//"images/displaying_results.png";
+            statusImage.src = img;
             break;
         default:
             statusElement.textContent = "Status: Unknown";
-            statusImage.src = img//"images/unknown.png";
+            statusImage.src = img;
     }
 }
+
+document.getElementById('openSeaLevels_button').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSea' });
+    });
+});
