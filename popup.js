@@ -8,16 +8,17 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
 
         annotateImage(response.imageUrl)
             .then((annotations) => {
-                if (annotations && annotations.length > 0) {
+                if (annotations.labelAnnotations && annotations.labelAnnotations.length > 0) {
                     setStatus(4, response.imageUrl); // Displaying results
                 } else {
-                    setStatus(3, response.imageUrl); // Waiting
+                    setStatus(3); // Waiting
                 }
 
                 // Save annotations to chrome.storage.local
-                //chrome.storage.local.set({ annotations: annotations });
+                chrome.storage.local.set({ annotations: annotations.labelAnnotations });
+                chrome.storage.local.set({ gcpResponse: annotations });
 
-                displayAnnotations(annotations);
+                displayAnnotations(annotations.labelAnnotations);
             })
             .catch((error) => {
                 console.error(error);
@@ -43,7 +44,11 @@ async function annotateImage(imageUrl) {
                 features: [
                     {
                         type: "LABEL_DETECTION",
-                        maxResults: 10,
+                        maxResults: 20,
+                    },
+                    {
+                        type: "IMAGE_PROPERTIES",
+                        maxResults: 20,
                     },
                 ],
             },
@@ -52,6 +57,7 @@ async function annotateImage(imageUrl) {
 
     let retries = 50;
     let annotations;
+    let gcpApiVisionResponse;
 
     while (retries > 0) {
         console.log('in while')
@@ -64,7 +70,11 @@ async function annotateImage(imageUrl) {
         });
 
         const data = await response.json();
+        console.log('debuging');
+        gcpApiVisionResponse = data.responses[0];
         annotations = data.responses[0].labelAnnotations;
+
+
 
         if (annotations && annotations.length > 0) {
             break;
@@ -76,7 +86,7 @@ async function annotateImage(imageUrl) {
         }
     }
 
-    return annotations;
+    return gcpApiVisionResponse;
 }
 
 function displayAnnotations(annotations) {
@@ -84,7 +94,7 @@ function displayAnnotations(annotations) {
 
     if (annotations && annotations.length > 0) {
         const list = document.createElement("ul");
-        annotations.forEach((annotation) => {
+        annotations.slice(0,5).forEach((annotation) => {
             const listItem = document.createElement("li");
             listItem.textContent = `${annotation.description} (${(annotation.score * 100).toFixed(2)}%)`;
             list.appendChild(listItem);
@@ -104,22 +114,34 @@ function setStatus(status, img) {
     switch (status) {
         case 1:
             statusElement.textContent = "Status: Image not loaded";
-            statusImage.src = "images/LOGO1.png";
+            statusImage.src = "images/project.png";
             break;
         case 2:
-            statusElement.textContent = "Status: Image loaded";
-            statusImage.src = img//"images/image_loaded.png";
+            statusElement.textContent = "Processing this image:";
+            statusImage.src = img;
             break;
         case 3:
             statusElement.textContent = "Status: Waiting (this can take a minute)";
             statusImage.src = "images/pixel5.png";
             break;
         case 4:
-            statusElement.textContent = "Status: Displaying results";
-            statusImage.src = img//"images/displaying_results.png";
+            statusElement.textContent = "Results (sample):";
+            statusImage.src = img;
             break;
         default:
             statusElement.textContent = "Status: Unknown";
-            statusImage.src = "images/LOGO1.png";
+            statusImage.src = img//"images/unknown.png";
     }
 }
+
+document.getElementById('openSeaLevels_button').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSeaLevels' });
+    });
+});
+
+document.getElementById('openSeaStats_button').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSeaStats' });
+    });
+});
