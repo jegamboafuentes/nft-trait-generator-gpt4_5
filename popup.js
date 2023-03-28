@@ -16,6 +16,7 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
 
                 // Save annotations to chrome.storage.local
                 chrome.storage.local.set({ annotations: annotations.labelAnnotations });
+                chrome.storage.local.set({ gcpResponse: annotations });
 
                 displayAnnotations(annotations.labelAnnotations);
             })
