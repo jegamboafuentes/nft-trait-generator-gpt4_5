@@ -145,3 +145,9 @@ document.getElementById('openSeaStats_button').addEventListener('click', () => {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSeaStats' });
     });
 });
+
+document.getElementById('manifoldTrait1_button').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoManifoldTraits1' });
+    });
+});
