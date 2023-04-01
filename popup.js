@@ -29,9 +29,19 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
     }
 });
 
+function generateThumbnail(imageUrl, width, height) {
+    const cloudName = 'dqazeznld'; // Replace with your Cloudinary cloud name
+    const encodedImageUrl = encodeURIComponent(imageUrl);
+    const transformation = `w_${width},h_${height},c_fill`;
+
+    return `https://res.cloudinary.com/${cloudName}/image/fetch/${transformation}/${encodedImageUrl}`;
+}
+
 async function annotateImage(imageUrl) {
     console.log('IN GCP VISON REST CALL FUNCTION')
-    console.log('image to analyze')
+    console.log('original image to analyze: ' + imageUrl)
+    imageUrl = generateThumbnail(imageUrl, 500, 500);
+    console.log('new image to analyze: ' + imageUrl)
     const apiEndpoint = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
     const requestBody = {
         requests: [
@@ -44,7 +54,7 @@ async function annotateImage(imageUrl) {
                 features: [
                     {
                         type: "LABEL_DETECTION",
-                        maxResults: 20,
+                        maxResults: 11,
                     },
                     {
                         type: "IMAGE_PROPERTIES",
@@ -94,7 +104,7 @@ function displayAnnotations(annotations) {
 
     if (annotations && annotations.length > 0) {
         const list = document.createElement("ul");
-        annotations.slice(0,5).forEach((annotation) => {
+        annotations.slice(0, 5).forEach((annotation) => {
             const listItem = document.createElement("li");
             listItem.textContent = `${annotation.description} (${(annotation.score * 100).toFixed(2)}%)`;
             list.appendChild(listItem);
