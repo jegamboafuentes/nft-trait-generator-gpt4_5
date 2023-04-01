@@ -11,6 +11,8 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   console.log("annotateImage listener")
   if (info.menuItemId === "annotateImage") {
+    console.log('Yo! enrique debuger');
+    console.log(info);
     imageUrl = info.srcUrl;
   }
 });
