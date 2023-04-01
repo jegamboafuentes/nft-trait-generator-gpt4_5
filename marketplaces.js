@@ -33,12 +33,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'insertDataIntoManifold1') {
     chrome.storage.local.get('gcpResponse', (data) => {
       if (data.gcpResponse.imagePropertiesAnnotation) {
-        //openSeaStats(gcpResponse) need to be executed 2 times, dont know why 
-        //openSeaStats(data.gcpResponse)
-        //openSeaStats(data.gcpResponse)
         manifold1Data(data.gcpResponse)
       } else {
-        console.error('insertDataIntoOpenSeaStats No annotations found in storage');
+        console.error('insertDataIntoManifold1 No annotations found in storage');
+      }
+    });
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'insertDataIntoManifold2') {
+    chrome.storage.local.get('gcpResponse', (data) => {
+      if (data.gcpResponse.imagePropertiesAnnotation) {
+        manifold2Data(data.gcpResponse)
+      } else {
+        console.error('insertDataIntoManifold2 No annotations found in storage');
       }
     });
   }
@@ -171,8 +180,16 @@ function manifold1Data(dataFromGCP) {
   } catch (error) {
     console.log(error)
   }
-
 }
+
+function manifold2Data(dataFromGCP) {
+  console.log("manifold2Data");
+  console.log(dataFromGCP);
+  bigListDescription = getBigTraitList(dataFromGCP);
+  console.log('manifold2Data after combining data');
+  console.log(bigListDescription.bigListValue);
+}
+
 
 //part of manifold1Data
 function triggerEvent(element, eventName) {
@@ -193,9 +210,13 @@ function getBigTraitList(gcpResponse) {
   //console.log(myAnnotationList);
   for (let i = 0; i < myAnnotationList.length; i++) {
     bigListDescription.push(myAnnotationList[i].description);
+    bigListValue.push(myAnnotationList[i].score);
   }
   for (let i = 0; i < myAnnotaationColor.length; i++) {
     bigListDescription.push(myAnnotaationColor[i]);
+    //here next develpment bro 4:33 4/1/23
+    
+
   }
   //here next goes the colors push to the description bro ;)
   console.log(bigListDescription);
@@ -213,9 +234,6 @@ function functionGetResponseAnnotation(gcpResponse) {
   responseAnnotationList = gcpResponse.labelAnnotations;
   return responseAnnotationList;
 }
-
-
-
 
 
 //next

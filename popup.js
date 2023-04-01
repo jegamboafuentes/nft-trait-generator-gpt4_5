@@ -165,4 +165,9 @@ document.getElementById('manifold_button1_test').addEventListener('click', () =>
     });
 });
 
+document.getElementById('manifold_button2_test').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoManifold2' });
+    });
+});
 //*/*/*/*/*/*/*/*/*/*/*/*/ENDTEST
