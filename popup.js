@@ -16,6 +16,8 @@ chrome.runtime.sendMessage({ type: "getImageUrl" }, (response) => {
 
                 // Save annotations to chrome.storage.local
                 chrome.storage.local.set({ annotations: annotations.labelAnnotations });
+                // console.log('gcpResponse +++++ chrome.runtime.sendMessage({ type: "getImageUrl" }');
+                // console.log(annotations);
                 chrome.storage.local.set({ gcpResponse: annotations });
 
                 displayAnnotations(annotations.labelAnnotations);
@@ -155,3 +157,12 @@ document.getElementById('openSeaStats_button').addEventListener('click', () => {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoOpenSeaStats' });
     });
 });
+
+//*/*/*/*/*/*/*/*/*/*/*/*/TEST 4/1/23
+document.getElementById('manifold_button1_test').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoManifold1' });
+    });
+});
+
+//*/*/*/*/*/*/*/*/*/*/*/*/ENDTEST
