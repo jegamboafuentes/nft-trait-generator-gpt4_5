@@ -158,22 +158,21 @@ document.getElementById('openSeaStats_button').addEventListener('click', () => {
     });
 });
 
-//*/*/*/*/*/*/*/*/*/*/*/*/TEST 4/1/23
-document.getElementById('manifold_button1_test').addEventListener('click', () => {
+
+document.getElementById('manifold_button1').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoManifold1' });
     });
 });
 
-document.getElementById('manifold_button2_test').addEventListener('click', () => {
+document.getElementById('manifold_button2').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoManifold2' });
     });
 });
 
-document.getElementById('manifold_button3_test').addEventListener('click', () => {
+document.getElementById('manifold_button3').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, { type: 'insertDataIntoManifold3' });
     });
 });
-//*/*/*/*/*/*/*/*/*/*/*/*/ENDTEST
