@@ -204,22 +204,24 @@ function getBigTraitList(gcpResponse) {
   bigListValue = [];
 
   myAnnotationList = functionGetResponseAnnotation(gcpResponse);
-  myAnnotaationColor = functionGetResponseColors(gcpResponse);
+  myAnnotaationColor = functionGetResponseColors(gcpResponse).responseColorList;
+  myAnnotaationColorValue = functionGetResponseColors(gcpResponse).percentageList;
 
   console.log("RETURN bigListDescription: ")
-  //console.log(myAnnotationList);
+  console.log(myAnnotaationColor);
+  console.log(myAnnotaationColorValue);
   for (let i = 0; i < myAnnotationList.length; i++) {
     bigListDescription.push(myAnnotationList[i].description);
     bigListValue.push(myAnnotationList[i].score);
   }
+  //console.log(myAnnotaationColor);
   for (let i = 0; i < myAnnotaationColor.length; i++) {
     bigListDescription.push(myAnnotaationColor[i]);
-    //here next develpment bro 4:33 4/1/23
-    
-
   }
-  //here next goes the colors push to the description bro ;)
-  console.log(bigListDescription);
+  for (let i = 0; i < myAnnotaationColorValue.length; i++) {
+    bigListValue.push(myAnnotaationColorValue[i]);
+  }
+
 
   return {
     bigListDescription,
@@ -240,6 +242,7 @@ function functionGetResponseAnnotation(gcpResponse) {
 
 function functionGetResponseColors(gcpResponse) {
   console.log("functionGetResponseColors");
+  console.log(gcpResponse);
   responseColorList = []
   for (var i = 0; i < gcpResponse.imagePropertiesAnnotation.dominantColors.colors.length; i++) {
     myR = gcpResponse.imagePropertiesAnnotation.dominantColors.colors[i].color.red;
@@ -248,5 +251,15 @@ function functionGetResponseColors(gcpResponse) {
     responseColorList.push(hexColor = rgbToHex(myR, myG, myB));
   };
 
-  return responseColorList;
+  percentageList = [];
+  sumColorScores = 0;
+  for (var i = 0; i < gcpResponse.imagePropertiesAnnotation.dominantColors.colors.length; i++) {
+    sumColorScores = sumColorScores + gcpResponse.imagePropertiesAnnotation.dominantColors.colors[i].score;
+  }
+  for (var i = 0; i < gcpResponse.imagePropertiesAnnotation.dominantColors.colors.length; i++) {
+    perc = gcpResponse.imagePropertiesAnnotation.dominantColors.colors[i].score / sumColorScores;
+    percentageList.push((perc)*100);
+  }
+
+  return { responseColorList, percentageList };
 }
