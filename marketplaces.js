@@ -52,6 +52,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   }
 });
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'insertDataIntoManifold3') {
+    chrome.storage.local.get('gcpResponse', (data) => {
+      if (data.gcpResponse.imagePropertiesAnnotation) {
+        manifold3Data(data.gcpResponse)
+      } else {
+        console.error('insertDataIntoManifold3 No annotations found in storage');
+      }
+    });
+  }
+});
 // */-*/-*/-*/-END MESSAGES FROM POPUP section
 
 //Inject GCP response into OpenSea Levels
@@ -188,8 +200,65 @@ function manifold2Data(dataFromGCP) {
   bigListDescription = getBigTraitList(dataFromGCP);
   console.log('manifold2Data after combining data');
   console.log(bigListDescription.bigListValue);
+  //this just changes the front end
+  try {
+    var t = document.getElementById("property-list");
+    var htmlTableList = t.getElementsByClassName("flex items-center py-2 border-b-2 list-el");
+
+    nfieldsUsed = 0;
+
+    //This for counts the spaces used 
+    for (var i = 0; i < htmlTableList.length; i++) {
+      let propertyNameInput = htmlTableList[i].querySelector('input[placeholder="Value"]');
+      if (htmlTableList[i].querySelector('input[placeholder="Value"]').value) {
+        nfieldsUsed = nfieldsUsed + 1;
+      } else {
+        htmlTableList[i].querySelector('input[placeholder="Value"]').value = bigListDescription.bigListValue[i]//'YO!';
+        triggerEvent(propertyNameInput, 'blur');
+      }
+
+    }
+    nfieldsFree = (htmlTableList.length - nfieldsUsed)
+    console.log('field used' + nfieldsUsed);
+    console.log('field free' + nfieldsFree);
+
+
+  } catch (error) {
+    console.log(error)
+  }
 }
 
+function manifold3Data(dataFromGCP) {
+  console.log("manifold3Data");
+  const myMax = 100;
+  nfieldsUsed = 0;
+  try {
+    var t = document.getElementById("property-list");
+    var htmlTableList = t.getElementsByClassName("w-full flex justify-between items-center");
+    console.log(htmlTableList);
+    //console.log(htmlTableList[3].querySelector('input[placeholder="Max Value"]'));
+    for (var i = 0; i < htmlTableList.length; i++) {
+      let maxField = htmlTableList[i].querySelector('input[placeholder="Max Value"]');
+      console.log(maxField);
+      if (maxField) {
+        maxField.value = 100;
+        triggerEvent(maxField, 'blur');
+      }
+      //maxField.value = 100;
+    }
+
+    // for (var i = 0; i < htmlTableList.length; i++) {
+    //   console.log(htmlTableList[i].querySelector('input[placeholder="Max Value"]'));
+    //   htmlTableList[i].querySelector('input[placeholder="Value"]').value;
+    //   triggerEvent(propertyNameInput, 'blur');
+    //   console.log(htmlTableList[i].querySelector('input[placeholder="Max Value"]'));
+
+    // }
+
+  } catch (error) {
+    console.log("error: " + error);
+  }
+}
 
 //part of manifold1Data
 function triggerEvent(element, eventName) {
@@ -208,11 +277,11 @@ function getBigTraitList(gcpResponse) {
   myAnnotaationColorValue = functionGetResponseColors(gcpResponse).percentageList;
 
   console.log("RETURN bigListDescription: ")
-  console.log(myAnnotaationColor);
-  console.log(myAnnotaationColorValue);
+  //console.log(myAnnotaationColor);
+  //console.log(myAnnotaationColorValue);
   for (let i = 0; i < myAnnotationList.length; i++) {
     bigListDescription.push(myAnnotationList[i].description);
-    bigListValue.push(myAnnotationList[i].score);
+    bigListValue.push((myAnnotationList[i].score * 100).toFixed(2));
   }
   //console.log(myAnnotaationColor);
   for (let i = 0; i < myAnnotaationColor.length; i++) {
@@ -237,9 +306,6 @@ function functionGetResponseAnnotation(gcpResponse) {
   return responseAnnotationList;
 }
 
-
-//next
-
 function functionGetResponseColors(gcpResponse) {
   console.log("functionGetResponseColors");
   console.log(gcpResponse);
@@ -258,7 +324,7 @@ function functionGetResponseColors(gcpResponse) {
   }
   for (var i = 0; i < gcpResponse.imagePropertiesAnnotation.dominantColors.colors.length; i++) {
     perc = gcpResponse.imagePropertiesAnnotation.dominantColors.colors[i].score / sumColorScores;
-    percentageList.push((perc)*100);
+    percentageList.push(((perc) * 100).toFixed(2));
   }
 
   return { responseColorList, percentageList };
