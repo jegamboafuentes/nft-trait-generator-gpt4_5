@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Image Annotation",
+    "name": "NFT trait generator",
     "version": "1.0",
-    "description": "A Chrome extension that uses the GCP Vision API to annotate images",
+    "description": "Our extension makes it easier than ever to add unique traits to your NFTs, with just a few clicks.",
     "permissions": ["contextMenus", "storage"],
     "action": {
       "default_popup": "popup.html",
