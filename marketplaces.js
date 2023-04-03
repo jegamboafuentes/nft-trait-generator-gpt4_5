@@ -290,6 +290,16 @@ function getBigTraitList(gcpResponse) {
   for (let i = 0; i < myAnnotaationColorValue.length; i++) {
     bigListValue.push(myAnnotaationColorValue[i]);
   }
+  //4/3/23 work
+  // bigListDescription.push("Artist");
+  // bigListDescription.push("AI_MODEL");
+  // bigListDescription.push("LENGTH");
+  // bigListDescription.push("WIDTH");
+  // bigListValue.push("metaverse_professional");
+  // bigListValue.push("Midjourney V5");
+  // bigListValue.push("4096");
+  // bigListValue.push("4096");
+  
 
 
   return {

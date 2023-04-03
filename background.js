@@ -3,7 +3,7 @@ let imageUrl = null;
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "annotateImage",
-    title: "Annotate Image",
+    title: "NFT trait generator",
     contexts: ["image"],
   });
 });
